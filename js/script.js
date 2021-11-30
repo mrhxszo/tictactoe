@@ -223,16 +223,22 @@ const Gameplay = ((player1, player2) => {
             }
             
             
-            if (count < 9 && opponent == "computer"){
+            if (count <= 9 && opponent == "computer"){
                 //aistuff
-                let board = copyboard(Gameboard.gameboard);
+                
+                if(count<9){
+                    let board = copyboard(Gameboard.gameboard);
 
-                let bestMove = aiplayer.findBestMove(board);
+                    let bestMove = aiplayer.findBestMove(board);
+    
+                    aiplayer.makeMove(Gameboard.gameboard, bestMove);
+    
+                    console.log("ROW: " + bestMove.row +
+                    " COL: "+ bestMove.col);
 
-                aiplayer.makeMove(Gameboard.gameboard, bestMove);
+                }
 
-                console.log("ROW: " + bestMove.row +
-			    " COL: "+ bestMove.col);
+                count++;
 
             }
         }

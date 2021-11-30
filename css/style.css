@@ -8,13 +8,13 @@ body{
     font-size: 50px;
     font-family: monospace;
     position: absolute;
-    left: 40%;
+    left: 38%;
     top: 5%;
 }
 .container{
     position: absolute;
     top: 30%;
-    left: 40%;
+    left: 37%;
     display: flex;
     flex-direction: column;
 }
@@ -40,15 +40,11 @@ body{
     grid-template-rows: 1fr 1fr 1fr;
     top: 30%;
     left: 40%;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
+    margin-bottom: 5px;
 }
-@media screen and (max-width: 480px) {
-    .gameboard{
-        top: 20%;
-        left: 10%;
-    }
-}
+
 .box{
     border: 1px solid #dad7d7;
     padding: 5px;
@@ -65,7 +61,7 @@ body{
     flex-direction: column;
     position: absolute;
     top: 70%;
-    left: 43%;
+    left: 44%;
 }
 .warning{
     display: none;
@@ -91,7 +87,7 @@ body{
     padding: 2rem 2rem 2rem 2rem;
     position: absolute;
     top: 20%;
-    left: 50%;
+    left: 43%;
 }
 .windowtext{
     font-size: 60px;
@@ -99,4 +95,32 @@ body{
     position: absolute;
     left: 40%;
     top: 50%;
+}
+
+@media screen and (max-width: 480px) {
+    .gameboard{
+        top: 20%;
+        left: 10%;
+    }
+    .h1{
+        left:8%;
+    }
+    .container{
+        left:0%;
+    }
+    .choose{
+        top:60%;
+        left:23%;
+    }
+    .restart{
+        left:30%;
+    }
+    .windowtext{
+        left: 0%;
+    }
+    .warning{
+        font-size: 30px;
+        left:0%;
+        bottom: 5%;
+    }
 }
