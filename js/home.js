@@ -17,10 +17,5 @@ computer.onclick = function (){
     home.style.display = "none";
 }
 
-replay.onclick = function(){
-        Gameplay.count = 1;
-        Gameplay.window.style.display = "none";
-        Gameboard.gameboard.forEach((array) => array.forEach((element) =>
-                    element.innerText = ""));
-    }
+replay.addEventListener("click", Gameplay.reset);
 

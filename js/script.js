@@ -85,6 +85,12 @@ const Gameplay = ((player1, player2) => {
     const play = document.querySelector(".play");
     const window = document.createElement("div");
     
+    const reset = function(){
+        count = 1;
+        window.style.display = "none";
+        Gameboard.gameboard.forEach((array) => array.forEach((element) =>
+                    element.innerText = ""));
+    }
 
 
     let copyboard = function(gameboard){
@@ -253,7 +259,7 @@ const Gameplay = ((player1, player2) => {
         
         
     }
-    return {turnDecider, checkwinner, count, winStates, checkloop, window};
+    return {turnDecider, checkwinner, reset, winStates, checkloop, window};
 
 
  
