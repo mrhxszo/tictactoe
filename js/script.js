@@ -30,29 +30,19 @@ return {
 })(document.querySelector(".gameboard"));
 
 
-const Player = (computer) => {
+const Player = () => {
     
     let sign = null;
-    computer = computer;
     const mark = function(a){
         if (a.innerText == "" ){
             a.innerText = this.sign;
         }
         
     }
-    let turn = null;
 
-    return {mark, sign, turn, computer};
+    return {mark, sign};
 }
 
-let Computer = () => {
-    const prototype = Player();
-    let computer = true;
-
-
-    return Object.assign({},prototype,{computer});
-
-}
 
 const displaybuttons = ((cross,zero)=>{
 
@@ -82,14 +72,89 @@ const displaybuttons = ((cross,zero)=>{
 
 
 
-let player1 = Player(false);
-let player2 = Computer(true); //if vs player is choosen player2=Player() if vs computer player2 = Computer;
+let player1 = Player();
+let player2 = Player();
+
 
 
 const Gameplay = ((player1, player2) => {
 
-    count = 1;
-    warning = document.querySelector(".warning");
+    let count = 1;
+    const warning = document.querySelector(".warning");
+    let winStates = [];
+    const play = document.querySelector(".play");
+    const window = document.createElement("div");
+    
+
+
+    let copyboard = function(gameboard){
+
+        let array =  [ [ '_', '_', '_' ],
+        			[ '_', '_', '_'  ],
+        			[ '_', '_', '_' ] ];
+        // console.log(array);
+
+        for(let i = 0; i < 3; i++)
+        {
+            for(let j = 0; j < 3; j++)
+            {
+                // console.log(array[i][j]);
+                if(!(gameboard[i][j].innerText == '')){
+                    array[i][j] = gameboard[i][j].innerText;
+                }
+                 
+            }
+        }
+        return array;
+    } 
+
+
+    function win(){
+        let diagonals = [];
+        let antiDiagonals = [];
+        let column0 = [];
+        let column1 = [];
+        let column2 = [];
+        let row0 = [];
+        let row1 = [];
+        let row2 = [];
+    
+        for( let i = 0; i < 3; i++){ 
+    
+            for( let j = 0; j < 3; j++){ 
+                if (i == j){
+                    diagonals.push(Gameboard.gameboard[i][j]);
+                }
+                if (i == 2-j){
+                    antiDiagonals.push(Gameboard.gameboard[i][j]);
+                }
+    
+                if (i == 0){
+                    column0.push(Gameboard.gameboard[i][j]);
+                }
+                if (i == 1){
+                    column1.push(Gameboard.gameboard[i][j]);
+                }
+                if (i == 2){
+                    column2.push(Gameboard.gameboard[i][j]);
+                }
+    
+                if (j == 0){
+                    row0.push(Gameboard.gameboard[i][j]);
+                }
+                if (j == 1){
+                    row1.push(Gameboard.gameboard[i][j]);
+                }
+                if (j == 2){
+                    row2.push(Gameboard.gameboard[i][j]); 
+                }
+    
+            }
+        }
+
+        winStates = [diagonals,antiDiagonals,column0,column1,column2,row0,row1,row2];
+    }
+    win();
 
     const checkloop = function(array) {
         if(!(array[0].innerText == '') && !(array[1].innerText == '') && !(array[2].innerText == '')){
@@ -106,106 +171,83 @@ const Gameplay = ((player1, player2) => {
         }
     }
 
-    const checkwinner = function (gameboard) {
-
-        let diagonals = [];
-        let antiDiagonals = [];
-        let column0 = [];
-        let column1 = [];
-        let column2 = [];
-        let row0 = [];
-        let row1 = [];
-        let row2 = [];
-
-        for( let i = 0; i < 3; i++){ 
-
-            for( let j = 0; j < 3; j++){ 
-                if (i == j){
-                    diagonals.push(gameboard[i][j]);
-                }
-                if (i == 2-j){
-                    antiDiagonals.push(gameboard[i][j]);
-                }
-
-                if (i == 0){
-                    column0.push(gameboard[i][j]);
-                }
-                if (i == 1){
-                    column1.push(gameboard[i][j]);
-                }
-                if (i == 2){
-                    column2.push(gameboard[i][j]);
-                }
- 
-                if (j == 0){
-                    row0.push(gameboard[i][j]);
-                }
-                if (j == 1){
-                    row1.push(gameboard[i][j]);
-                }
-                if (j == 2){
-                    row2.push(gameboard[i][j]); 
-                }
-
-            }
-        }
+    const restartf = function(){
         
-
-        let winStates = [diagonals, antiDiagonals, column0, column1, column2, row0, row1, row2];
-        // console.log(winStates);
+        window.classList.add("window");
+        play.appendChild(window);
+        let restart = document.querySelector(".restart");
+        restart.onclick = function(){
+            console.log(Gameplay.window);
+            Gameboard.gameboard.forEach((array) => array.forEach((element) =>
+                                                element.innerText = ""));
+            window.style.display = "none";
+                
+            }
+    }
+    const checkwinner = function (gameboard) {
+        
         //checking if winning condition is satisfied
         winStates.forEach(element => { 
             if (checkloop(element) == 10){
-                warning.innerText = "Player 1 wins!";
-                warning.style.display = "block";
-                return 10;
+                window.innerHTML = "<p class ='windowtext'>Player 1 wins!</p><div class = 'button replay restart'>Restart</div>";
+                restartf();
+                window.style.display = "block";
+                count = 1;
             }
             else if (checkloop(element) == -10){
-                warning.innerText = "Player 2 wins!";
-                warning.style.display = "block";
-                return -10;
+                window.innerHTML = "<p class ='windowtext'>Player 2 wins!</p><div class = 'button replay restart'>Restart</div>";
+                restartf();
+                window.style.display = "block";
+                count = 1;
             }
             else if (count > 9){
-                warning.innerText = "It's a tie!";
-                warning.style.display = "block";
+                window.innerHTML = "<p class ='windowtext'>It's a tie!</p><div class = 'button replay restart'>Restart</div>";
+                restartf();
+                window.style.display = "block";
+                count = 1;
             };
             
         });
+        
         return 0; 
     };
 
     const turnDecider = function (e) {
+        
         if (!(player1.sign == null && player2.sign == null)){
-            if (count % 2 == 0 && !(player2.computer == true)){
+            if (count % 2 == 0 && opponent == "human"){
                 player2.mark(e.srcElement);
-                player2.turn = true;
-                player1.turn = false;
             }
             else{
                 player1.mark(e.srcElement);
-                player1.turn = true;
-                player2.turn = false;
             }
-            count++;
-
-            checkwinner(Gameboard.gameboard);
             
-            if (count > 9 ){
-                count = 1;
-            }
-            else if (count < 9){
+            
+            if (count < 9 && opponent == "computer"){
                 //aistuff
-                copyBoard(Gameboard.gameboard);
-                makeMove(Gameboard.gameboard, findbestMove(Gameboard.gameboard));
+                let board = copyboard(Gameboard.gameboard);
+
+                let bestMove = aiplayer.findBestMove(board);
+
+                aiplayer.makeMove(Gameboard.gameboard, bestMove);
+
+                console.log("ROW: " + bestMove.row +
+			    " COL: "+ bestMove.col);
+
             }
         }
         else{
             warning.style.display = "block";
         }
+
+        checkwinner(Gameboard.gameboard);
+        count++;
+
+
         
         
     }
-    return {turnDecider, checkwinner, count};
+    return {turnDecider, checkwinner, count, winStates, checkloop, window};
 
 
  

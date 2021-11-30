@@ -1,201 +1,227 @@
+let aiplayer = (() => {
 
-let newBoard = Gameboard.makeboard();
+//with array
+let bestMove ={"row":-1,"column":-1};
 
-let copyBoard = function (gameboard){
-    gameboard.forEach((box, i) => box.forEach((element, j) => newBoard[i][j].innerText = element.innerText));
-
+// This function returns true if there are moves
+// remaining on the board. It returns false if
+// there are no moves left to play.
+function isMovesLeft(board)
+{
+	for(let i = 0; i < 3; i++)
+		for(let j = 0; j < 3; j++)
+			if (board[i][j] == '_')
+				return true;
+				
+	return false;
 }
 
 
+function evaluate(b)
+{
+	
+	// Checking for Rows for X or O victory.
+	for(let row = 0; row < 3; row++)
+	{
+		if (b[row][0] == b[row][1] &&
+			b[row][1] == b[row][2])
+		{
+			if (b[row][0] == player1.sign)
+				return +10;
+				
+			else if (b[row][0] == player2.sign)
+				return -10;
+		}
+	}
 
-const checkloop = function(array) {
-    if(!(array[0].innerText == '') && !(array[1].innerText == '') && !(array[2].innerText == '')){
-        
-        if(array[0].innerText == array[1].innerText && array[1].innerText == array[2].innerText){
-            if(array[0].innerText == player1.sign){
-                return 10;
+	// Checking for Columns for X or O victory.
+	for(let col = 0; col < 3; col++)
+	{
+		if (b[0][col] == b[1][col] &&
+			b[1][col] == b[2][col])
+		{
+			if (b[0][col] == player1.sign)
+				return +10;
 
-            }
-            else{
-                return -10;
-            }
-        } 
-    }
+			else if (b[0][col] == player2.sign)
+				return -10;
+		}
+	}
+
+	// Checking for Diagonals for X or O victory.
+	if (b[0][0] == b[1][1] && b[1][1] == b[2][2])
+	{
+		if (b[0][0] == player1.sign)
+			return +10;
+			
+		else if (b[0][0] == player2.sign)
+			return -10;
+	}
+
+	if (b[0][2] == b[1][1] &&
+		b[1][1] == b[2][0])
+	{
+		if (b[0][2] == player1.sign)
+			return +10;
+			
+		else if (b[0][2] == player2.sign)
+			return -10;
+	}
+
+	// Else if none of them have
+	// won then return 0
+	return 0;
 }
 
-function evaluation(gameboard){
+// This is the minimax function. It
+// considers all the possible ways
+// the game can go and returns the
+// value of the board
+function minimax(board, depth, alpha, beta, isMax)
+{
+	let score = evaluate(board);
 
-    let diagonals = [];
-    let antiDiagonals = [];
-    let column0 = [];
-    let column1 = [];
-    let column2 = [];
-    let row0 = [];
-    let row1 = [];
-    let row2 = [];
+	// If Maximizer has won the game
+	// return his/her evaluated score
+	if (score == 10)
+		return score;
 
-    for( let i = 0; i < 3; i++){ 
+	// If Minimizer has won the game
+	// return his/her evaluated score
+	if (score == -10)
+		return score;
 
-        for( let j = 0; j < 3; j++){ 
-            if (i == j){
-                diagonals.push(gameboard[i][j]);
-            }
-            if (i == 2-j){
-                antiDiagonals.push(gameboard[i][j]);
-            }
+	// If there are no more moves and
+	// no winner then it is a tie
+	if (isMovesLeft(board) == false)
+		return 0;
 
-            if (i == 0){
-                column0.push(gameboard[i][j]);
-            }
-            if (i == 1){
-                column1.push(gameboard[i][j]);
-            }
-            if (i == 2){
-                column2.push(gameboard[i][j]);
-            }
+	// If this maximizer's move
+	if (isMax)
+	{
+		let best = -1000;
 
-            if (j == 0){
-                row0.push(gameboard[i][j]);
-            }
-            if (j == 1){
-                row1.push(gameboard[i][j]);
-            }
-            if (j == 2){
-                row2.push(gameboard[i][j]); 
-            }
+		// Traverse all cells
+		for(let i = 0; i < 3; i++)
+		{
+			for(let j = 0; j < 3; j++)
+			{
+				
+				// Check if cell is empty
+				if (board[i][j]=='_')
+				{
+					
+					// Make the move
+					board[i][j] = player1.sign;
 
-        }
-    }
-    
+					// Call minimax recursively
+					// and choose the maximum value
+					best = Math.max(best, minimax(board,
+									depth + 1,alpha, beta, !isMax));
 
-    let winStates = [diagonals, antiDiagonals, column0, column1, column2, row0, row1, row2];
-    //checking if winning condition is satisfied
-    for(element of winStates){
-        if (checkloop(element) == 10){
-            return 10;
-        }
-        else if (checkloop(element) == -10){
-            return -10;
-    }};
-    return 0; 
+					// Undo the move
+					board[i][j] = '_';
 
+                    //  alpha = Math.max(alpha, best);
+                        
+                    //     if(beta<=alpha){
+                    //         break;
+                    //     }
 
+				}
+			}
+		}
+		return best - depth;
+	}
+
+	// If this minimizer's move
+	else
+	{
+		let best = 1000;
+
+		// Traverse all cells
+		for(let i = 0; i < 3; i++)
+		{
+			for(let j = 0; j < 3; j++)
+			{
+				
+				// Check if cell is empty
+				if (board[i][j] == '_')
+				{
+					
+					// Make the move
+					board[i][j] = player2.sign;
+
+					// Call minimax recursively and
+					// choose the minimum value
+					best = Math.min(best, minimax(board,
+									depth + 1, alpha, beta, !isMax));
+
+					// Undo the move
+					board[i][j] = '_';
+                    // beta = Math.min(beta, best);
+                        
+                    // if(beta<=alpha){
+                    //     break;
+                    // }
+				}
+			}
+		}
+		return best + depth;
+	}
 }
 
-const findbestMove = function(gameboard){
-    let bestScore = 1000;
-    let bestMove = {"row":-1,"column":-1};
+// This will return the best possible
+// move for the player
+function findBestMove(board)
+{
+	let bestVal = 1000;
 
-    gameboard.forEach((array, i) => array.forEach((element, j) => {
+	for(let i = 0; i < 3; i++)
+	{
+		for(let j = 0; j < 3; j++)
+		{
+			
+			// Check if cell is empty
+			if (board[i][j] == '_')
+			{
+				
+				// Make the move
+				board[i][j] = player2.sign;
 
-        if(element.innerText == ""){
-            //make move
-            
-            element.innerText = player2.sign;
+				// compute evaluation function
+				// for this move.
+				let moveVal = minimax(board, 0, -1000, 1000, true);
 
-            //evaluate the value of the move
-            let moveVal = minimax(gameboard, 0, true);
-            console.log(moveVal);
+				// Undo the move
+				board[i][j] = '_';
 
-            //undo the move
-            element.innerText = "";
+				if (moveVal < bestVal)
+				{
+					bestMove["row"] = i;
+					bestMove["col"] = j;
+					bestVal = moveVal;
+				}
+			}
+		}
+	}
 
-            //if the value obtained is better than value exists update bestscore
-            if(moveVal < bestScore){
-                bestMove["row"] = i;
-                bestMove["column"] = j;
-                bestScore = moveVal;
-            }
-        ;
+	console.log("The value of the best Move " +
+				"is : ", bestVal);
 
-        }
-
-    } ));
-
-    return bestMove;
-
+	return bestMove;
 }
+
 
 let makeMove = function (board, array ){
 
     i = array["row"];
-    j = array["column"];
+    j = array["col"];
 
     player2.mark(board[i][j]);
 
 
 }
 
-function isempty(board){
-    for (array of board) 
-    {
-        for (let element of array){
-            if(element.innerText == "")
-                return true;
-        }
-    }
-    return false;
-}
-
-let minimax = function (board, depth , isMax){
-
-
-    let score = evaluation(board);
-
-    //win or loss
-    if(score == 10){
-        return score;
-    }
-    if(score == -10){
-        return score;
-    }
-
-    //tie
-   if (!isempty(board)){
-       return 0;
-   }
-    
-    if(isMax){
-        let best = -1000;
-
-        for(let array of board){
-            for(let element of array){
-                if(element.innerText == ""){
-                
-                    element.innerText = player1.sign;
-    
-                    best = Math.max(best, minimax(board, depth +1, !isMax));
-    
-    
-                    element.innerText = "";
-                }
-            }
-        }
-    return best;
-    }
-
-
-    else{
-
-        let best = 1000;
-
-        for(let array of board){
-            for(let element of array){
-                if(element.innerText == ""){
-                
-                    element.innerText = player2.sign;
-    
-                    best = Math.min(best, minimax(board, depth +1, !isMax));
-    
-    
-                    element.innerText = "";
-                }
-            }
-        }
-    return best;
-    }
-}
-
-
-
-//Gameboard.gameboard.forEach((box) => box.forEach((element) => element.addEventListener('click', copyBoard)));
+return {makeMove, findBestMove}
+})();

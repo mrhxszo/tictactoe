@@ -1,6 +1,9 @@
 body{
     background-color: rgb(184, 131, 53);
 }
+.play{
+    display: none;
+}
 .h1{
     font-size: 50px;
     font-family: monospace;
@@ -59,9 +62,10 @@ body{
 }
 .choose{
     display: flex;
+    flex-direction: column;
     position: absolute;
-    top: 80%;
-    left: 45%;
+    top: 70%;
+    left: 43%;
 }
 .warning{
     display: none;
@@ -70,4 +74,29 @@ body{
     position: absolute;
     bottom: 5%;
     left: 30%;
+}
+.window{
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0,0, 0.7);
+    overflow: auto;
+}
+.restart{
+    padding: 2rem 2rem 2rem 2rem;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+}
+.windowtext{
+    font-size: 60px;
+    color: wheat;
+    position: absolute;
+    left: 40%;
+    top: 50%;
 }
